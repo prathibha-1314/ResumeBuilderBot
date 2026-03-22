@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Resume – ResumeBuilder.Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <span class="brand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:32px; vertical-align:middle; margin-right:8px; border-radius:6px;">
+        ResumeBuilder.Bot
+    </span>
+    <div class="nav-links">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('create_resume') }}">Create Resume</a>
+        <a href="{{ url_for('my_resumes') }}">My Resumes</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <h2>Create Your Resume</h2>
+        <p style="color:#94a3b8; margin-bottom:20px;">
+            Fill in your details. We'll generate 3 ATS-optimized versions for you to review & edit before downloading.
+        </p>
+
+        <form method="POST" action="{{ url_for('create_resume') }}" enctype="multipart/form-data">
+
+            <!-- Profile Photo -->
+            <h3 style="margin-bottom:12px; font-size:1.2rem; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">📷 Profile Photo</h3>
+
+            <div class="form-group">
+                <label for="profile_photo">Upload Photo (PNG/JPG, optional)</label>
+                <input type="file" id="profile_photo" name="profile_photo" accept=".png,.jpg,.jpeg"
+                       style="padding:8px; background:rgba(15,23,42,0.6); border:1px solid rgba(100,116,139,0.4); border-radius:8px; color:#e2e8f0; width:100%;">
+            </div>
+
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid rgba(56, 189, 248, 0.2);">
+
+            <!-- Personal Information -->
+            <h3 style="margin-bottom:12px; font-size:1.2rem; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">📋 Personal Information</h3>
+
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" required
+                       placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required
+                       placeholder="john@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone *</label>
+                <input type="tel" id="phone" name="phone" required
+                       placeholder="+1-234-567-8900">
+            </div>
+
+            <div class="form-group">
+                <label for="linkedin">LinkedIn URL *</label>
+                <input type="text" id="linkedin" name="linkedin" required
+                       placeholder="linkedin.com/in/johndoe or full URL">
+            </div>
+
+            <div class="form-group">
+                <label for="github">GitHub URL (optional)</label>
+                <input type="text" id="github" name="github"
+                       placeholder="github.com/johndoe or full URL">
+            </div>
+
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid rgba(56, 189, 248, 0.2);">
+
+            <!-- Education -->
+            <h3 style="margin-bottom:12px; font-size:1.2rem; background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">🎓 Education</h3>
+
+            <!-- 1. University (Optional) -->
+            <h4 style="margin-bottom:8px; font-size:1rem; color:#a78bfa;">University (Optional)</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 2; min-width: 200px;">
+                    <label for="uni_name">University Name</label>
+                    <input type="text" id="uni_name" name="uni_name" placeholder="XYZ University">
+                </div>
+                <div class="form-group" style="flex: 2; min-width: 200px;">
+                    <label for="uni_degree">Degree Name</label>
+                    <input type="text" id="uni_degree" name="uni_degree" placeholder="B.Tech in CS">
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 100px;">
+                    <label for="uni_cgpa">Current CGPA</label>
+                    <input type="text" id="uni_cgpa" name="uni_cgpa" placeholder="8.5">
+                </div>
+            </div>
+
+            <!-- 2. High School (Required) -->
+            <h4 style="margin-bottom:8px; margin-top:10px; font-size:1rem; color:#a78bfa;">12th Grade / High School (Required)</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 2; min-width: 200px;">
+                    <label for="hs_name">School / Board Name *</label>
+                    <input type="text" id="hs_name" name="hs_name" placeholder="ABC High School" required>
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 100px;">
+                    <label for="hs_percentage">Percentage / Score *</label>
+                    <input type="text" id="hs_percentage" name="hs_percentage" placeholder="92%" required>
+                </div>
+            </div>
+
+            <!-- 3. SSLC (Optional) -->
+            <h4 style="margin-bottom:8px; margin-top:10px; font-size:1rem; color:#a78bfa;">10th Grade / SSLC (Optional)</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 2; min-width: 200px;">
+                    <label for="sslc_name">School / Board Name</label>
+                    <input type="text" id="sslc_name" name="sslc_name" placeholder="XYZ Secondary School">
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 100px;">
+                    <label for="sslc_percentage">Percentage / Score</label>
+                    <input type="text" id="sslc_percentage" name="sslc_percentage" placeholder="95%">
+                </div>
+            </div>
+
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid rgba(56, 189, 248, 0.2);">
+
+            <!-- Skills & Experience -->
+            <h3 style="margin-bottom:12px; font-size:1.2rem; background: linear-gradient(135deg, #34d399, #38bdf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">💡 Skills &amp; Experience</h3>
+
+            <div class="form-group">
+                <label for="skills">Skills * (comma-separated)</label>
+                <input type="text" id="skills" name="skills" required
+                       placeholder="Python, JavaScript, React, SQL, Docker">
+            </div>
+
+            <div class="form-group">
+                <label for="experience">Experience &amp; Internships (add details and bullet points!)</label>
+                <textarea id="experience" name="experience" rows="6"
+                          placeholder="Software Intern at Google (Jun 2024 - Aug 2024)&#10;• Worked on backend APIs using Python and Flask&#10;• Reduced latency by 15% through optimized queries"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="projects">Projects</label>
+                <textarea id="projects" name="projects" rows="6"
+                          placeholder="E-commerce Platform&#10;• Built with React and Node.js implementing a scalable architecure&#10;• Integrated Stripe payment gateway processing $10k+ in test transactions"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="certifications">Certifications (one per line)</label>
+                <textarea id="certifications" name="certifications" rows="3"
+                          placeholder="AWS Certified Cloud Practitioner&#10;Google Data Analytics Certificate"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="achievements">Achievements (one per line)</label>
+                <textarea id="achievements" name="achievements" rows="3"
+                          placeholder="Won Hackathon 2024 – Best Innovation Prize&#10;Published research paper on ML models"></textarea>
+            </div>
+
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid rgba(56, 189, 248, 0.2);">
+
+            <!-- Target Job -->
+            <h3 style="margin-bottom:12px; font-size:1.2rem; background: linear-gradient(135deg, #f97316, #ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">🎯 Target Job</h3>
+
+            <div class="form-group">
+                <label for="job_role">Job Role *</label>
+                <input type="text" id="job_role" name="job_role" required
+                       placeholder="Full Stack Developer">
+            </div>
+
+            <div class="form-group">
+                <label for="company_name">Company Name *</label>
+                <input type="text" id="company_name" name="company_name" required
+                       placeholder="Google">
+            </div>
+
+            <div class="form-group">
+                <label for="job_description">Job Description * (paste the full JD)</label>
+                <textarea id="job_description" name="job_description" rows="8" required
+                          placeholder="Paste the complete job description here. We'll extract keywords and optimize your resume."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width:100%; margin-top:8px;">
+                🚀 Generate Resume (3 Versions)
+            </button>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

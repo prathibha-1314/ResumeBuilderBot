@@ -1,0 +1,375 @@
+/* =============================================
+   ResumeBuilder.Bot – Global Styles (Premium)
+   ============================================= */
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e2e8f0;
+    line-height: 1.6;
+    min-height: 100vh;
+    background: #0f172a;
+    /* Animated gradient background */
+    background: linear-gradient(-45deg, #0f172a, #1e293b, #1a1a2e, #16213e, #0f3460);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating particles effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(56, 189, 248, 0.15) 0%, transparent 100%),
+        radial-gradient(2px 2px at 40% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 100%),
+        radial-gradient(2px 2px at 60% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 100%),
+        radial-gradient(2px 2px at 80% 60%, rgba(236, 72, 153, 0.08) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 10%, rgba(139, 92, 246, 0.08) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 50%, rgba(56, 189, 248, 0.06) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+a {
+    color: #38bdf8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #7dd3fc;
+    text-decoration: none;
+}
+
+/* ---------- Layout ---------- */
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 14px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.navbar .brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.navbar .nav-links a {
+    color: #94a3b8;
+    margin-left: 20px;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+.navbar .nav-links a:hover {
+    color: #38bdf8;
+}
+
+/* ---------- Cards (Glassmorphism) ---------- */
+.card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(56, 189, 248, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 32px;
+    margin-bottom: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+.card h2 {
+    margin-bottom: 20px;
+    color: #f1f5f9;
+    font-size: 1.5rem;
+}
+
+/* ---------- Forms ---------- */
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(100, 116, 139, 0.4);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #64748b;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-block;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+.btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+.btn-primary:hover {
+    box-shadow: 0 6px 25px rgba(37, 99, 235, 0.45);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #475569, #64748b);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
+}
+.btn-secondary:hover {
+    box-shadow: 0 6px 20px rgba(71, 85, 105, 0.45);
+    color: #fff;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+.btn-success:hover {
+    box-shadow: 0 6px 25px rgba(5, 150, 105, 0.45);
+    color: #fff;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+.btn-danger:hover {
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45);
+    color: #fff;
+}
+
+.btn-sm {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+}
+
+/* ---------- Flash Messages ---------- */
+.flash {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    backdrop-filter: blur(8px);
+}
+.flash-success {
+    background: rgba(22, 163, 74, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+.flash-danger {
+    background: rgba(220, 38, 38, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(252, 165, 165, 0.3);
+}
+.flash-warning {
+    background: rgba(202, 138, 4, 0.15);
+    color: #fde047;
+    border: 1px solid rgba(253, 224, 71, 0.3);
+}
+.flash-info {
+    background: rgba(37, 99, 235, 0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(147, 197, 253, 0.3);
+}
+
+/* ---------- Dashboard ---------- */
+.dashboard-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+}
+.dashboard-actions .btn {
+    flex: 1;
+    padding: 22px;
+    font-size: 1.15rem;
+    text-align: center;
+    border-radius: 14px;
+}
+
+/* Stat cards on dashboard */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.stat-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(56, 189, 248, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+.stat-card .stat-icon {
+    font-size: 2rem;
+    margin-bottom: 6px;
+}
+.stat-card .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #38bdf8;
+}
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+/* ---------- Resume Cards ---------- */
+.resume-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(100, 116, 139, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+}
+.resume-card:hover {
+    border-color: rgba(56, 189, 248, 0.3);
+    transform: none;
+    box-shadow: none;
+}
+.resume-card h3 {
+    color: #f1f5f9;
+}
+
+/* ---------- Email Form ---------- */
+.email-form-inline {
+    display: none;
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+.email-form-inline.show {
+    display: block;
+}
+
+/* ---------- Auth Pages ---------- */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    position: relative;
+    z-index: 1;
+}
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+/* ---------- Section Dividers ---------- */
+.section-divider {
+    border: none;
+    border-top: 1px solid rgba(100, 116, 139, 0.2);
+    margin: 24px 0;
+}
+
+/* ---------- Welcome Text ---------- */
+.welcome-subtitle {
+    color: #64748b;
+    margin-bottom: 20px;
+}
+
+/* ---------- Matched Keywords Badge ---------- */
+.keywords-badge {
+    color: #4ade80;
+    font-size: 0.85rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+    .dashboard-actions {
+        flex-direction: column;
+    }
+    .navbar {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .dashboard-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}

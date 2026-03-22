@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Resumes – ResumeBuilder.Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <span class="brand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:32px; vertical-align:middle; margin-right:8px; border-radius:6px;">
+        ResumeBuilder.Bot
+    </span>
+    <div class="nav-links">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('create_resume') }}">Create Resume</a>
+        <a href="{{ url_for('my_resumes') }}">My Resumes</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <h2>My Resumes</h2>
+
+        {% if resumes|length == 0 %}
+            <p style="color:#94a3b8;">You haven't created any resumes yet.</p>
+            <a href="{{ url_for('create_resume') }}" class="btn btn-primary" style="margin-top:12px;">
+                ✏️ Create Your First Resume
+            </a>
+        {% else %}
+            <p style="color:#94a3b8; margin-bottom:16px;">
+                You have {{ resumes|length }} resume(s). Each has 3 versions.
+            </p>
+
+            {% for resume in resumes %}
+            <div class="resume-card">
+                <h3 style="margin-bottom:4px;">
+                    {{ resume['name'] }} – {{ resume['job_role'] }}
+                </h3>
+                <p style="color:#64748b; font-size:0.85rem; margin-bottom:12px;">
+                    {{ resume['company_name'] }} &middot; Created {{ resume['created_at'] }}
+                </p>
+
+                {% if resume['matched_keywords'] %}
+                <p style="font-size:0.85rem; margin-bottom:12px;">
+                    <strong style="color:#94a3b8;">Matched Keywords:</strong>
+                    <span class="keywords-badge">{{ resume['matched_keywords'] }}</span>
+                </p>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+                    <a href="{{ url_for('templates_browser', resume_id=resume['id']) }}"
+                       class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #2563eb, #7c3aed); flex: 1; justify-content:center;">
+                       👁️ Choose Template & Edit
+                    </a>
+                    
+                    <form method="POST" action="{{ url_for('delete_resume', resume_id=resume['id']) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" style="height: 100%; border-radius: 6px; padding: 0 15px;"
+                                onclick="return confirm('Are you sure you want to delete this resume?')">
+                            🗑️ Delete
+                        </button>
+                    </form>
+                </div>
+
+
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+
+
+</body>
+</html>

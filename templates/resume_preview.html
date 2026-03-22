@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Preview – {{ style|title }}</title>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for Client-Side PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* Base Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0f172a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px 20px;
+            color: #333; /* Default text color for the resume */
+        }
+
+        /* Toolbar / Actions Container */
+        .toolbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(135deg, #2563eb, #7c3aed); }
+        .btn-cover { background: linear-gradient(135deg, #a78bfa, #ec4899); }
+        .btn-back { background: #475569; }
+
+        /* Document Wrapper */
+        .document-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 80px; /* Space for toolbar */
+        }
+
+        /* 
+           STRICT ONE PAGE RESUME (A4 dimensions)
+           Width: 210mm, Height: 297mm 
+        */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            /* max-height: 297mm;  */
+            /* Removing max-height keeps content editable, user should visually ensure it fits. 
+               We will add a guide border to show A4 limits if needed, but standard is letting 
+               html2pdf fit it onto one page by scale or just strictly clipping. */
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            padding: 20mm 15mm;
+            position: relative;
+            overflow: hidden; /* Prevent visual spilling out of the A4 box */
+        }
+
+        /* Editable Areas */
+        [contenteditable="true"]:hover {
+            outline: 1px dashed rgba(56, 189, 248, 0.5);
+            background: rgba(56, 189, 248, 0.05);
+            cursor: text;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #38bdf8;
+            background: transparent;
+        }
+
+        /* --- THEME SPECIFIC STYLES --- */
+        
+        /* 1. ATS TEMA (Minimal, B&W, No icons, No Graphics) */
+        .style-ats { font-family: 'Times New Roman', Times, serif; color: #000; }
+        .style-ats .header-container { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #000; padding-bottom: 15px; margin-bottom: 15px; }
+        .style-ats .header-left { flex: 1; }
+        .style-ats .header-name { font-size: 26pt; font-weight: bold; margin-bottom: 5px; }
+        .style-ats .contact-info { font-size: 10pt; display: flex; flex-direction: column; gap: 4px; }
+        .style-ats .contact-item { display: inline-flex; align-items: center; gap: 6px; }
+        .style-ats .contact-item i { display: none; } /* Strictly no icons */
+        .style-ats .profile-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 1.5px solid #000; margin-left: 20px; }
+        .style-ats .section-title { font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; text-transform: uppercase; margin-top: 15px; margin-bottom: 8px; padding-bottom: 2px; }
+        .style-ats .contact-separator { margin: 0 5px; }
+
+        /* 2. BALANCED TEMA (Clean, Icons, Left-Aligned Header) */
+        .style-balanced { font-family: 'Arial', sans-serif; color: #222; }
+        .style-balanced .header-container { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #2c3e50; padding-bottom: 15px; margin-bottom: 15px; }
+        .style-balanced .header-left { flex: 1; }
+        .style-balanced .header-name { font-size: 26pt; font-weight: bold; color: #2c3e50; margin-bottom: 5px; }
+        .style-balanced .contact-info { font-size: 10pt; display: flex; flex-direction: column; gap: 4px; }
+        .style-balanced .contact-item { display: inline-flex; align-items: center; gap: 6px; }
+        .style-balanced .contact-item i { color: #34495e; width: 14px; text-align: center; }
+        .style-balanced .profile-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #2c3e50; margin-left: 20px; }
+        .style-balanced .section-title { font-size: 14pt; font-weight: bold; color: #2c3e50; border-bottom: 1px solid #bdc3c7; margin-top: 15px; margin-bottom: 8px; padding-bottom: 4px; text-transform: uppercase;}
+
+        /* 3. CREATIVE TEMA (Colors, Profile Photo, Left-Right Header) */
+        .style-creative { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+        .style-creative .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #3498db; padding-bottom: 15px; margin-bottom: 20px; }
+        .style-creative .header-left { flex: 1; }
+        .style-creative .header-name { font-size: 28pt; font-weight: 800; color: #2980b9; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .style-creative .contact-info { font-size: 10pt; display: flex; flex-wrap: wrap; gap: 10px 20px; }
+        .style-creative .contact-item { display: inline-flex; align-items: center; gap: 6px; }
+        .style-creative .contact-item i { color: #e74c3c; font-size: 11pt; }
+        .style-creative .contact-separator { display: none; }
+        .style-creative .profile-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid #3498db; margin-left: 20px; }
+        .style-creative .section-title { font-size: 14pt; font-weight: bold; color: #2980b9; margin-top: 18px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- SHARED CONTENT STYLES --- */
+        .section-content { font-size: 10pt; line-height: 1.5; }
+        
+        .list-block { margin-bottom: 8px; }
+        .list-block ul { margin-left: 18px; padding-left: 0; }
+        .list-block li { margin-bottom: 4px; }
+        
+        /* Strict Education Alignment Output */
+        .education-list { list-style-type: none; margin: 0; padding: 0; }
+        .education-list > li { position: relative; padding-left: 15px; margin-bottom: 12px; }
+        .education-list > li::before { content: "•"; position: absolute; left: 0; font-weight: bold; }
+        .degree-name { font-weight: bold; }
+        .edu-details { margin-left: 0; color: unset; }
+
+        /* Hide elements when printing */
+        .html2pdf__container { overflow: hidden !important; }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar" id="action-toolbar">
+        <a href="{{ url_for('templates_browser', resume_id=resume.id) }}" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <button class="btn btn-primary" onclick="downloadPDF('resume-page', '{{ resume.name }}'.replace(/ /g, '_') + '_Resume_{{ style }}.pdf')">
+            <i class="fas fa-download"></i> Download Resume
+        </button>
+        <button class="btn btn-secondary" style="background:#475569;" onclick="togglePhotoShape()">
+            <i class="fas fa-crop-simple"></i> Toggle Photo Shape
+        </button>
+        <button class="btn btn-cover" onclick="downloadPDF('cover-letter-page', '{{ resume.name }}'.replace(/ /g, '_') + '_CoverLetter.pdf')">
+            <i class="fas fa-envelope-open-text"></i> Download Cover Letter
+        </button>
+    </div>
+
+    <div class="document-wrapper">
+        
+        <!-- RESUME PAGE -->
+        <div id="resume-page" class="a4-page style-{{ style }}">
+            
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="header-name" contenteditable="true">{{ resume.name }}</div>
+                    <div class="contact-info" contenteditable="true">
+                        <span class="contact-item"><i class="fas fa-envelope"></i> {{ resume.email }}</span>
+                        <span class="contact-item"><i class="fas fa-phone"></i> {{ resume.phone }}</span>
+                        {% if resume.linkedin %}<span class="contact-item"><i class="fab fa-linkedin"></i> {{ resume.linkedin }}</span>{% endif %}
+                        {% if resume.github %}<span class="contact-item"><i class="fab fa-github"></i> {{ resume.github }}</span>{% endif %}
+                    </div>
+                </div>
+                {% if resume.profile_photo %}
+                    <img src="{{ url_for('static', filename='uploads/' + resume.profile_photo) }}" class="profile-photo" alt="Profile Photo">
+                {% endif %}
+            </div>
+
+            <!-- Professional Summary -->
+            {% if style == 'creative' %}
+                <div class="section-title" contenteditable="true">Profile Summary</div>
+                <div class="section-content" contenteditable="true">
+                    Results-driven and highly motivated {{ resume.job_role }} with comprehensive expertise in {{ resume.skills.split(',')[0] if resume.skills else 'core industry technologies' }}. Proven ability to align capabilities with business objectives. Excited to bring an innovative approach and measurable impact to the team at {{ resume.company_name }} in alignment with the outlined job requirements.
+                </div>
+            {% elif style == 'balanced' %}
+                <div class="section-title" contenteditable="true">Professional Summary</div>
+                <div class="section-content" contenteditable="true">
+                    Dedicated {{ resume.job_role }} offering strong proficiency in {{ resume.skills.split(',')[0] if resume.skills else 'software development' }} and a track record of delivering high-quality solutions. Eager to leverage my skills to exceed expectations and immediately contribute to the strategic goals at {{ resume.company_name }} based on the job description.
+                </div>
+            {% else %}
+                <div class="section-title" contenteditable="true">Summary</div>
+                <div class="section-content" contenteditable="true">
+                    Experienced {{ resume.job_role }} specialized in {{ resume.skills.split(',')[0] if resume.skills else 'industry best practices' }}. Adept at solving complex problems and driving operational success. Fully prepared to integrate with the team at {{ resume.company_name }} and execute responsibilities effectively as detailed in the job description.
+                </div>
+            {% endif %}
+
+
+            <!-- Education (Strict Alignment as requested) -->
+            <div class="section-title" contenteditable="true">Education</div>
+            <div class="section-content">
+                <ul class="education-list" contenteditable="true">
+                    {% if resume.education %}
+                        {% for ed in resume.education.split('\n') if ed.strip() %}
+                            <li>
+                                <!-- The user requested • Degree Name \n College Name \n CGPA format -->
+                                <!-- We provide a clean baseline block they can edit -->
+                                <div class="degree-name">{{ ed.split('-')[0].strip() if '-' in ed else ed }}</div>
+                                <div class="edu-details">University / College Name</div>
+                                <div class="edu-details">CGPA / Percentage</div>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li>
+                            <div class="degree-name">Degree Name</div>
+                            <div class="edu-details">College Name</div>
+                            <div class="edu-details">CGPA</div>
+                        </li>
+                        <li>
+                            <div class="degree-name">School Name</div>
+                            <div class="edu-details">High School (12th Grade) Percentage</div>
+                            <div class="edu-details">Secondary School (10th Grade) Percentage</div>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Skills (Only user-entered, no matching fluff) -->
+            {% if resume.skills %}
+            <div class="section-title" contenteditable="true">Skills</div>
+            <div class="section-content" contenteditable="true">
+                {{ resume.skills }}
+            </div>
+            {% endif %}
+
+            <!-- Experience & Internships -->
+            {% if resume.experience %}
+            <div class="section-title" contenteditable="true">Experience &amp; Internships</div>
+            <div class="section-content list-block" contenteditable="true" style="white-space: pre-wrap;">{{ resume.experience }}</div>
+            {% endif %}
+
+            <!-- Projects -->
+            {% if resume.projects %}
+            <div class="section-title" contenteditable="true">Projects</div>
+            <div class="section-content list-block" contenteditable="true" style="white-space: pre-wrap;">{{ resume.projects }}</div>
+            {% endif %}
+
+            <!-- Certifications -->
+            {% if resume.certifications %}
+            <div class="section-title" contenteditable="true">Certifications</div>
+            <div class="section-content list-block" contenteditable="true" style="white-space: pre-wrap;">{{ resume.certifications }}</div>
+            {% endif %}
+
+            <!-- Achievements -->
+            {% if resume.achievements %}
+            <div class="section-title" contenteditable="true">Achievements</div>
+            <div class="section-content list-block" contenteditable="true" style="white-space: pre-wrap;">{{ resume.achievements }}</div>
+            {% endif %}
+
+        </div>
+
+        <!-- COVER LETTER PAGE -->
+        <div id="cover-letter-page" class="a4-page style-{{ style }}">
+            
+            <div class="header-container" style="margin-bottom:30px;">
+                <div class="header-left">
+                    <div class="header-name" contenteditable="true">{{ resume.name }}</div>
+                    <div class="contact-info" contenteditable="true">
+                        <span class="contact-item"><i class="fas fa-envelope"></i> {{ resume.email }}</span>
+                        <span class="contact-item"><i class="fas fa-phone"></i> {{ resume.phone }}</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="section-content" contenteditable="true" style="white-space: pre-wrap; font-size:11pt; line-height:1.6;">{{ resume.cover_letter }}</div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function downloadPDF(elementId, filename) {
+            const element = document.getElementById(elementId);
+            
+            // Generate PDF using html2pdf.js
+            const opt = {
+                margin:       0,
+                filename:     filename,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Temporary hide borders/outlines from contenteditable during print
+            const editables = element.querySelectorAll('[contenteditable="true"]');
+            editables.forEach(el => el.blur());
+
+            // the library creates the PDF from the visual DOM
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function togglePhotoShape() {
+            const photos = document.querySelectorAll('.profile-photo');
+            photos.forEach(photo => {
+                if (photo.style.borderRadius === '12px' || photo.style.borderRadius === '0%') {
+                    photo.style.borderRadius = '50%';
+                } else {
+                    photo.style.borderRadius = '12px';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

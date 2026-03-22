@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Template – ResumeBuilder.Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <span class="brand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:32px; vertical-align:middle; margin-right:8px; border-radius:6px;">
+        ResumeBuilder.Bot
+    </span>
+    <div class="nav-links">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('create_resume') }}">Create Resume</a>
+        <a href="{{ url_for('my_resumes') }}">My Resumes</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="card" style="text-align:center;">
+        <h2 style="font-size:2rem; margin-bottom:10px;">🎨 Choose Your Template</h2>
+        <p style="color:#94a3b8; margin-bottom:30px;">
+            Select a template below to open the interactive editor. You can click on any text in the preview to edit it visually before downloading.
+        </p>
+
+        <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+            
+            <div class="resume-card" style="flex:1; min-width:220px; text-align:center; padding:30px;">
+                <h3 style="color:#e2e8f0; font-size:1.5rem; margin-bottom:10px;">ATS Optimized</h3>
+                <p style="color:#64748b; font-size:0.9rem; margin-bottom:20px;">
+                    Strict, minimal, black &amp; white layout with no icons. Perfect for corporate scanner bots.
+                </p>
+                <a href="{{ url_for('render_preview', resume_id=resume.id, style='ats') }}" class="btn btn-primary" style="width:100%;">
+                    👁️ Preview ATS
+                </a>
+            </div>
+
+            <div class="resume-card" style="flex:1; min-width:220px; text-align:center; padding:30px;">
+                <h3 style="color:#e2e8f0; font-size:1.5rem; margin-bottom:10px;">Balanced</h3>
+                <p style="color:#64748b; font-size:0.9rem; margin-bottom:20px;">
+                    Clean layout with contact icons and subtle styling. Best for direct email applications.
+                </p>
+                <a href="{{ url_for('render_preview', resume_id=resume.id, style='balanced') }}" class="btn btn-secondary" style="width:100%;">
+                    👁️ Preview Balanced
+                </a>
+            </div>
+
+            <div class="resume-card" style="flex:1; min-width:220px; text-align:center; padding:30px;">
+                <h3 style="color:#e2e8f0; font-size:1.5rem; margin-bottom:10px;">Creative</h3>
+                <p style="color:#64748b; font-size:0.9rem; margin-bottom:20px;">
+                    Includes your profile photo with vibrant accent colors. Great for modern tech companies.
+                </p>
+                <a href="{{ url_for('render_preview', resume_id=resume.id, style='creative') }}" class="btn btn-success" style="width:100%;">
+                    👁️ Preview Creative
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

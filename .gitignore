@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+.env
+
+# Database
+database.db
+
+# Deployment packages
+deploy.zip
+
+# Uploaded/Generated files
+resumes/
