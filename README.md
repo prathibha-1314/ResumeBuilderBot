@@ -54,7 +54,7 @@
    *The database (`database.db`) will be automatically initialized on the first run.*
 
 5. **Open your browser:**
-   Navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000) to view the app!
+   Navigate to https://myresumebuilder.pythonanywhere.com to view the app!
 
 ## 📂 Project Structure
 
